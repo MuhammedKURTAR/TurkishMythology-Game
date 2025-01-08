@@ -1,18 +1,28 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
     public int maxHealth = 100;
     private int currentHealth;
     private bool isDead = false;
+    private Animator animator;
 
     public HealthBar healthBar;
     public Transform healthBarCanvas;
 
     void Start()
     {
+        animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("Animator bileï¿½eni atanmadï¿½!");
+        }
+
         currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
+        if (healthBar != null)
+        {
+            healthBar.SetMaxHealth(maxHealth);
+        }
 
         if (healthBarCanvas != null)
         {
@@ -40,9 +50,11 @@ public class EnemyHealth : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= damageAmount;
-        Debug.Log(gameObject.name + " hasar aldý: " + damageAmount + ". Kalan can: " + currentHealth);
 
-        healthBar.SetHealth(currentHealth);
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(currentHealth);
+        }
 
         if (currentHealth <= 0)
         {
@@ -52,14 +64,15 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
+        if (isDead) return;
+
         isDead = true;
-        Debug.Log(gameObject.name + " öldü!");
-        /*
-        if (GameMaster.Instance != null)
+
+        if (animator != null)
         {
-            GameMaster.Instance.AddScore(10);
+            animator.SetBool("isDead", true);
         }
-        */
+
         Destroy(gameObject, 2f);
     }
 }
